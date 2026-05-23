@@ -1,8 +1,8 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from services.gigachat_service import (
-    generate_gigachat_questions
+from services.gift_generator import (
+    build_gift_questions
 )
 
 
@@ -17,47 +17,73 @@ def test_api(request):
 @api_view(['POST'])
 def generate_questions(request):
 
-    topic = request.data.get('topic')
+    try:
 
-    questions_count = request.data.get(
-        'questions_count',
-        5
-    )
+        topic: str = request.data.get(
+            'topic',
+            ''
+        ).strip()
 
-    provider = request.data.get(
-        'provider',
-        'gigachat'
-    )
+        questions_count: int = int(
+            request.data.get(
+                'questions_count',
+                5
+            )
+        )
 
-    language = request.data.get(
-        'language',
-        'ru'
-    )
+        language: str = request.data.get(
+            'language',
+            'ru'
+        )
 
-    question_type = request.data.get(
-        'question_type',
-        'single'
-    )
+        question_type: str = request.data.get(
+            'question_type',
+            'single'
+        )
 
-    answers_count = request.data.get(
-        'answers_count',
-        4
-    )
+        answers_count: int = int(
+            request.data.get(
+                'answers_count',
+                4
+            )
+        )
 
-    source_text = request.data.get(
-        'source_text',
-        ''
-    )
+        source_text: str = request.data.get(
+            'source_text',
+            ''
+        ).strip()
 
-    result = generate_gigachat_questions(
-        topic=topic,
-        questions_count=questions_count,
-        language=language,
-        question_type=question_type,
-        answers_count=answers_count,
-        source_text=source_text
-    )
 
-    return Response({
-        'gift': result
-    })
+        if not topic:
+
+            return Response(
+                {
+                    'error': 'Topic is required'
+                },
+                status=400
+            )
+
+
+        result = build_gift_questions(
+            topic=topic,
+            questions_count=questions_count,
+            language=language,
+            question_type=question_type,
+            answers_count=answers_count,
+            source_text=source_text
+        )
+
+
+        return Response({
+            'gift': result
+        })
+
+
+    except Exception as error:
+
+        return Response(
+            {
+                'error': str(error)
+            },
+            status=500
+        )

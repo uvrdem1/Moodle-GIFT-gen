@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import axios from 'axios'
 
+import { motion } from 'framer-motion'
+
+import Header from './components/Header'
+import GeneratorForm from './components/GeneratorForm'
+import QuestionsPreview from './components/QuestionsPreview'
+
+
 function App() {
 
   const [topic, setTopic] = useState('')
@@ -41,13 +48,17 @@ function App() {
         }
       )
 
-      setGiftResult(response.data.gift)
+      setGiftResult(
+        response.data.gift
+      )
 
     } catch (error) {
 
       console.error(error)
 
-      alert('Ошибка генерации вопросов')
+      alert(
+        'Ошибка генерации'
+      )
 
     } finally {
 
@@ -60,18 +71,22 @@ function App() {
 
     const blob = new Blob(
       [giftResult],
-      { type: 'text/plain' }
+      {
+        type: 'text/plain'
+      }
     )
 
-    const url = window.URL.createObjectURL(blob)
+    const url = window.URL.createObjectURL(
+      blob
+    )
 
-    const a = document.createElement('a')
+    const link = document.createElement('a')
 
-    a.href = url
+    link.href = url
 
-    a.download = 'questions.gift'
+    link.download = 'questions.gift'
 
-    a.click()
+    link.click()
 
     window.URL.revokeObjectURL(url)
   }
@@ -88,196 +103,78 @@ function App() {
 
 
   return (
-    <div className="min-h-screen bg-gray-100 p-10">
 
-      <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl p-10">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white overflow-hidden">
 
-        <h1 className="text-5xl font-bold mb-10 text-center">
-          Генератор Moodle GIFT
-        </h1>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500 opacity-20 blur-3xl rounded-full"></div>
 
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-
-          <div>
-
-            <label className="block mb-2 font-semibold text-lg">
-              Нейросеть
-            </label>
-
-            <select
-              value={provider}
-              onChange={(e) => setProvider(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl p-4 mb-6 text-lg"
-            >
-
-              <option value="gigachat">
-                GigaChat
-              </option>
-
-              <option value="chatgpt">
-                ChatGPT
-              </option>
-
-            </select>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500 opacity-20 blur-3xl rounded-full"></div>
 
 
-            <label className="block mb-2 font-semibold text-lg">
-              Язык генерации
-            </label>
+      <div className="relative z-10 p-10">
 
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl p-4 mb-6 text-lg"
-            >
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 40
+          }}
+          animate={{
+            opacity: 1,
+            y: 0
+          }}
+          transition={{
+            duration: 0.7
+          }}
+          className="max-w-7xl mx-auto"
+        >
 
-              <option value="ru">
-                Русский
-              </option>
+          <Header />
 
-              <option value="en">
-                English
-              </option>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
-            </select>
+            <GeneratorForm
 
+              provider={provider}
+              setProvider={setProvider}
 
-            <label className="block mb-2 font-semibold text-lg">
-              Тематика вопросов
-            </label>
+              language={language}
+              setLanguage={setLanguage}
 
-            <input
-              type="text"
-              placeholder="Основы Python"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl p-4 mb-6 text-lg"
+              topic={topic}
+              setTopic={setTopic}
+
+              questionType={questionType}
+              setQuestionType={setQuestionType}
+
+              questionsCount={questionsCount}
+              setQuestionsCount={setQuestionsCount}
+
+              answersCount={answersCount}
+              setAnswersCount={setAnswersCount}
+
+              sourceText={sourceText}
+              setSourceText={setSourceText}
+
+              loading={loading}
+
+              generateQuestions={generateQuestions}
             />
 
 
-            <label className="block mb-2 font-semibold text-lg">
-              Тип вопроса
-            </label>
+            <QuestionsPreview
 
-            <select
-              value={questionType}
-              onChange={(e) => setQuestionType(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl p-4 mb-6 text-lg"
-            >
+              giftResult={giftResult}
 
-              <option value="single">
-                Один правильный ответ
-              </option>
+              setGiftResult={setGiftResult}
 
-              <option value="boolean">
-                Верно / Неверно
-              </option>
+              copyGift={copyGift}
 
-              <option value="multiple">
-                Множественный выбор
-              </option>
-
-            </select>
-
-
-            <label className="block mb-2 font-semibold text-lg">
-              Количество вопросов
-            </label>
-
-            <input
-              type="number"
-              value={questionsCount}
-              onChange={(e) => setQuestionsCount(Number(e.target.value))}
-              className="w-full border border-gray-300 rounded-xl p-4 mb-6 text-lg"
-            />
-
-
-            <label className="block mb-2 font-semibold text-lg">
-              Количество вариантов ответа
-            </label>
-
-            <input
-              type="number"
-              value={answersCount}
-              onChange={(e) => setAnswersCount(Number(e.target.value))}
-              className="w-full border border-gray-300 rounded-xl p-4 mb-6 text-lg"
-            />
-
-
-            <label className="block mb-2 font-semibold text-lg">
-              Текст для генерации вопросов
-            </label>
-
-            <textarea
-              value={sourceText}
-              onChange={(e) => setSourceText(e.target.value)}
-              placeholder="Вставьте текст..."
-              className="w-full h-[250px] border border-gray-300 rounded-xl p-4 mb-6 text-lg"
-            />
-
-
-            <button
-              onClick={generateQuestions}
-              disabled={loading}
-              className="w-full bg-blue-600 text-white p-4 rounded-xl hover:bg-blue-700 transition text-lg font-semibold"
-            >
-              {
-                loading
-                  ? 'Генерация...'
-                  : 'Сгенерировать вопросы'
-              }
-            </button>
-
-          </div>
-
-
-          <div>
-
-            <div className="flex justify-between items-center mb-4">
-
-              <h2 className="text-3xl font-semibold">
-                Сгенерированные вопросы
-              </h2>
-
-              <div className="flex gap-3">
-
-                {
-                  giftResult && (
-                    <button
-                      onClick={copyGift}
-                      className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800"
-                    >
-                      Копировать
-                    </button>
-                  )
-                }
-
-                {
-                  giftResult && (
-                    <button
-                      onClick={downloadGift}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-                    >
-                      Скачать .gift
-                    </button>
-                  )
-                }
-
-              </div>
-
-            </div>
-
-
-            <textarea
-              value={giftResult}
-              onChange={(e) => setGiftResult(e.target.value)}
-              className="w-full h-[900px] border border-gray-300 rounded-xl p-4 font-mono text-sm bg-gray-50"
+              downloadGift={downloadGift}
             />
 
           </div>
 
-        </div>
+        </motion.div>
 
       </div>
 
