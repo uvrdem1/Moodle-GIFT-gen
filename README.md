@@ -2,9 +2,13 @@
 
 Веб-приложение для генерации тестовых вопросов в формате Moodle GIFT с использованием больших языковых моделей (LLM).
 
+Проект разработан в рамках дипломной работы:
+
+> «Фронтенд-разработка веб-приложения для генерации вопросов и ответов в формате GIFT для системы дистанционного обучения Moodle с использованием больших языковых моделей»
+
 ---
 
-# Возможности
+# Основные возможности
 
 - Генерация тестовых вопросов через AI
 - Поддержка Moodle GIFT format
@@ -15,6 +19,8 @@
 - Редактирование результата
 - Экспорт `.gift`
 - Современный AI интерфейс
+- Component-based frontend architecture
+- REST API backend
 
 ---
 
@@ -29,6 +35,8 @@
 - Framer Motion
 - Axios
 - Lucide React
+
+---
 
 ## Backend
 
@@ -46,9 +54,13 @@
 ```text
 React Frontend
 ↓
-Django REST API
+REST API
 ↓
-GigaChat Service
+Django Backend
+↓
+Prompt Builder
+↓
+GigaChat Client
 ↓
 Moodle GIFT Generator
 ```
@@ -69,17 +81,53 @@ Moodle GIFT Generator
 backend/
 │
 ├── api/
-├── services/
-├── backend/
-├── manage.py
+│   ├── views.py
+│   └── urls.py
 │
+├── services/
+│   ├── gigachat_client.py
+│   ├── gift_generator.py
+│   └── prompt_builder.py
+│
+├── backend/
+│
+└── manage.py
+
+
 frontend/
 │
 ├── src/
+│   ├── components/
+│   │   ├── Header.tsx
+│   │   ├── GeneratorForm.tsx
+│   │   └── QuestionsPreview.tsx
+│   │
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── index.css
+│
 ├── public/
+│
 ├── package.json
 └── vite.config.ts
 ```
+
+---
+
+# Функциональность интерфейса
+
+Приложение поддерживает:
+
+- Выбор нейросети
+- Выбор языка генерации
+- Выбор типа вопросов
+- Количество вопросов
+- Количество вариантов ответа
+- Тематику вопросов
+- Генерацию по пользовательскому тексту
+- Редактирование результата
+- Копирование результата
+- Экспорт `.gift`
 
 ---
 
@@ -137,7 +185,9 @@ pip install django djangorestframework python-dotenv gigachat django-cors-header
 .env
 ```
 
-### Добавьте:
+---
+
+## Добавьте:
 
 ```env
 GIGACHAT_CREDENTIALS=YOUR_GIGACHAT_CREDENTIALS
@@ -188,23 +238,6 @@ Frontend будет доступен:
 ```text
 http://localhost:5173
 ```
-
----
-
-# Интерфейс приложения
-
-Приложение поддерживает:
-
-- Выбор нейросети
-- Выбор языка генерации
-- Тип вопросов
-- Количество вопросов
-- Количество вариантов ответа
-- Тематику вопросов
-- Генерацию по пользовательскому тексту
-- Редактирование результата
-- Копирование результата
-- Экспорт `.gift`
 
 ---
 
@@ -264,7 +297,7 @@ TRUE
 
 ---
 
-# Используемые AI технологии
+# Используемые AI подходы
 
 - Prompt Engineering
 - REST API Integration
@@ -274,7 +307,21 @@ TRUE
 
 ---
 
-# Планы по развитию
+# Особенности реализации
+
+Во время разработки были реализованы:
+
+- Модульная frontend архитектура
+- Разделение backend логики по сервисам
+- Система динамического prompt generation
+- Поддержка различных типов вопросов
+- Интеграция с GigaChat API
+- Поддержка мультиязычной генерации
+- Editable Moodle GIFT output
+
+---
+
+# Возможные направления развития
 
 - Поддержка ChatGPT API
 - Авторизация пользователей
@@ -288,12 +335,12 @@ TRUE
 
 ---
 
-# Автор
+# Назначение проекта
 
-Demian Uvarov
+Проект разработан в учебных целях в рамках дипломной работы.
 
 ---
 
-# Лицензия
+# Автор
 
-MIT
+Demian Uvarov
