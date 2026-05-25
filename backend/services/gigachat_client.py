@@ -1,33 +1,75 @@
-import os
-
-os.environ.pop("HTTP_PROXY", None)
-os.environ.pop("HTTPS_PROXY", None)
-os.environ.pop("ALL_PROXY", None)
-
-from dotenv import load_dotenv
-from gigachat import GigaChat
+import uuid
+import requests
 
 
-load_dotenv()
+AUTH_KEY = "MDE5ZTU0ZjYtZmMwZC03NzZiLTg2MzctYzAwNWY5NmNiNjJkOmIxOTJkZTczLWJhNGMtNGMzOS1iMWQ5LWExMTA2NGY1MTMyNQ=="
 
 
-def request_gigachat(prompt: str) -> str:
+def get_access_token():
 
-    credentials = os.getenv(
-        'GIGACHAT_CREDENTIALS'
+    url = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
+
+    headers = {
+        "Authorization": f"Basic {AUTH_KEY}",
+        "RqUID": str(uuid.uuid4()),
+        "Content-Type": "application/x-www-form-urlencoded"
+    }
+
+    payload = {
+        "scope": "GIGACHAT_API_PERS"
+    }
+
+    response = requests.post(
+        url,
+        headers=headers,
+        data=payload,
+        verify=False
     )
 
-    if not credentials:
+    print("TOKEN RESPONSE:")
+    print(response.status_code)
+    print(response.text)
 
-        raise ValueError(
-            'GIGACHAT_CREDENTIALS not found'
-        )
+    response.raise_for_status()
 
-    with GigaChat(
-        credentials=credentials,
-        verify_ssl_certs=False
-    ) as giga:
+    return response.json()["access_token"]
 
-        response = giga.chat(prompt)
 
-        return response.choices[0].message.content
+def request_gigachat(prompt):
+
+    access_token = get_access_token()
+
+    url = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions"
+
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "GigaChat",
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        "temperature": 0.7
+    }
+
+    response = requests.post(
+        url,
+        headers=headers,
+        json=payload,
+        verify=False
+    )
+
+    print("CHAT RESPONSE:")
+    print(response.status_code)
+    print(response.text)
+
+    response.raise_for_status()
+
+    data = response.json()
+
+    return data["choices"][0]["message"]["content"]

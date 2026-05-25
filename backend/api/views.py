@@ -5,64 +5,21 @@ from services.gift_generator import (
     build_gift_questions
 )
 
-
-@api_view(['GET'])
-def test_api(request):
-
-    return Response({
-        'message': 'API works!'
-    })
+import traceback
 
 
 @api_view(['POST'])
 def generate_questions(request):
 
     try:
+        data = request.data
 
-        topic: str = request.data.get(
-            'topic',
-            ''
-        ).strip()
-
-        questions_count: int = int(
-            request.data.get(
-                'questions_count',
-                5
-            )
-        )
-
-        language: str = request.data.get(
-            'language',
-            'ru'
-        )
-
-        question_type: str = request.data.get(
-            'question_type',
-            'single'
-        )
-
-        answers_count: int = int(
-            request.data.get(
-                'answers_count',
-                4
-            )
-        )
-
-        source_text: str = request.data.get(
-            'source_text',
-            ''
-        ).strip()
-
-
-        if not topic:
-
-            return Response(
-                {
-                    'error': 'Topic is required'
-                },
-                status=400
-            )
-
+        topic = data.get('topic')
+        questions_count = data.get('questions_count')
+        language = data.get('language')
+        question_type = data.get('question_type')
+        answers_count = data.get('answers_count')
+        material = data.get('material')
 
         result = build_gift_questions(
             topic=topic,
@@ -70,20 +27,25 @@ def generate_questions(request):
             language=language,
             question_type=question_type,
             answers_count=answers_count,
-            source_text=source_text
+            material=material
         )
-
 
         return Response({
-            'gift': result
+            'result': result
         })
 
+    except Exception as e:
 
-    except Exception as error:
+        traceback.print_exc()
 
-        return Response(
-            {
-                'error': str(error)
-            },
-            status=500
-        )
+        return Response({
+            'error': str(e)
+        }, status=500)
+
+
+@api_view(['GET'])
+def test_api(request):
+
+    return Response({
+        'status': 'ok'
+    })

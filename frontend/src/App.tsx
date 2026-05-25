@@ -7,7 +7,6 @@ import Header from './components/Header'
 import GeneratorForm from './components/GeneratorForm'
 import QuestionsPreview from './components/QuestionsPreview'
 
-
 function App() {
 
   const [topic, setTopic] = useState('')
@@ -48,8 +47,10 @@ function App() {
         }
       )
 
+      console.log(response.data)
+
       setGiftResult(
-        response.data.gift
+        response.data.result
       )
 
     } catch (error) {

@@ -13,7 +13,7 @@ def build_gift_questions(
     language: str,
     question_type: str,
     answers_count: int,
-    source_text: str
+    material: str
 ) -> str:
 
     prompt = build_generation_prompt(
@@ -22,7 +22,7 @@ def build_gift_questions(
         language=language,
         question_type=question_type,
         answers_count=answers_count,
-        source_text=source_text
+        source_text=material
     )
 
     result = request_gigachat(
