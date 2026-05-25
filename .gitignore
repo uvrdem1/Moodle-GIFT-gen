@@ -1,6 +1,27 @@
+# Python
+
 venv/
-node_modules/
-.env
+
 __pycache__/
-dist/
+
 *.pyc
+
+.env
+
+# Django
+
+db.sqlite3
+
+# Frontend
+
+node_modules/
+
+dist/
+
+# macOS
+
+.DS_Store
+
+# VSCode
+
+.vscode/
