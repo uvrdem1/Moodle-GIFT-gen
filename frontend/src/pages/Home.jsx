@@ -1,48 +1,80 @@
 import { useState } from 'react'
-import axios from 'axios'
+
+import api from '../api'
 
 import { motion } from 'framer-motion'
 
-import Header from './components/Header'
-import GeneratorForm from './components/GeneratorForm'
-import QuestionsPreview from './components/QuestionsPreview'
+import Header from '../components/Header'
+import GeneratorForm from '../components/GeneratorForm'
+import QuestionsPreview from '../components/QuestionsPreview'
 
-function App() {
+
+function Home() {
 
   const [topic, setTopic] = useState('')
 
-  const [questionsCount, setQuestionsCount] = useState(5)
+  const [questionsCount, setQuestionsCount] =
+    useState(5)
 
-  const [giftResult, setGiftResult] = useState('')
+  const [giftResult, setGiftResult] =
+    useState('')
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] =
+    useState(false)
 
-  const [provider, setProvider] = useState('gigachat')
+  const [provider, setProvider] =
+    useState('gigachat')
 
-  const [language, setLanguage] = useState('ru')
+  const [language, setLanguage] =
+    useState('ru')
 
-  const [questionType, setQuestionType] = useState('single')
+  const [questionType, setQuestionType] =
+    useState('single')
 
-  const [answersCount, setAnswersCount] = useState(4)
+  const [answersCount, setAnswersCount] =
+    useState(4)
 
-  const [sourceText, setSourceText] = useState('')
+  const [sourceText, setSourceText] =
+    useState('')
 
 
   const generateQuestions = async () => {
+
+    const token = localStorage.getItem(
+      'access'
+    )
+
+    if (!token) {
+
+      alert('Сначала войдите')
+
+      window.location.href =
+        '/login'
+
+      return
+    }
 
     try {
 
       setLoading(true)
 
-      const response = await axios.post(
-        'http://127.0.0.1:8000/api/generate/',
+      const response = await api.post(
+
+        '/generate/',
+
         {
           topic,
+
           questions_count: questionsCount,
+
           provider,
+
           language,
+
           question_type: questionType,
+
           answers_count: answersCount,
+
           source_text: sourceText,
         }
       )
@@ -103,6 +135,28 @@ function App() {
   }
 
 
+  const logout = () => {
+
+    localStorage.removeItem(
+      'access'
+    )
+
+    localStorage.removeItem(
+      'refresh'
+    )
+
+    window.location.href =
+      '/login'
+  }
+
+
+  const openHistory = () => {
+
+    window.location.href =
+      '/history'
+  }
+
+
   return (
 
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white overflow-hidden">
@@ -128,6 +182,25 @@ function App() {
           }}
           className="max-w-7xl mx-auto"
         >
+
+          <div className="flex justify-end gap-4 mb-6">
+
+            <button
+              onClick={openHistory}
+              className="bg-slate-800 hover:bg-slate-700 transition-all px-5 py-3 rounded-2xl"
+            >
+              История
+            </button>
+
+            <button
+              onClick={logout}
+              className="bg-red-600 hover:bg-red-500 transition-all px-5 py-3 rounded-2xl"
+            >
+              Выйти
+            </button>
+
+          </div>
+
 
           <Header />
 
@@ -183,4 +256,4 @@ function App() {
   )
 }
 
-export default App
+export default Home

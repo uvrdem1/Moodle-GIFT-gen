@@ -29,7 +29,6 @@ interface GeneratorFormProps {
   generateQuestions: () => void
 }
 
-
 export default function GeneratorForm({
 
   provider,
@@ -76,7 +75,6 @@ export default function GeneratorForm({
 
       </div>
 
-
       <div className="space-y-6">
 
         <div>
@@ -103,7 +101,6 @@ export default function GeneratorForm({
 
         </div>
 
-
         <div>
 
           <label className="block mb-2 text-slate-300">
@@ -128,7 +125,6 @@ export default function GeneratorForm({
 
         </div>
 
-
         <div>
 
           <label className="block mb-2 text-slate-300">
@@ -144,7 +140,6 @@ export default function GeneratorForm({
           />
 
         </div>
-
 
         <div>
 
@@ -174,7 +169,6 @@ export default function GeneratorForm({
 
         </div>
 
-
         <div className="grid grid-cols-2 gap-4">
 
           <div>
@@ -186,12 +180,15 @@ export default function GeneratorForm({
             <input
               type="number"
               value={questionsCount}
-              onChange={(e) => setQuestionsCount(Number(e.target.value))}
+              onChange={(e) =>
+                setQuestionsCount(
+                  Number(e.target.value)
+                )
+              }
               className="w-full bg-slate-900 border border-slate-700 rounded-xl p-4"
             />
 
           </div>
-
 
           <div>
 
@@ -202,14 +199,17 @@ export default function GeneratorForm({
             <input
               type="number"
               value={answersCount}
-              onChange={(e) => setAnswersCount(Number(e.target.value))}
+              onChange={(e) =>
+                setAnswersCount(
+                  Number(e.target.value)
+                )
+              }
               className="w-full bg-slate-900 border border-slate-700 rounded-xl p-4"
             />
 
           </div>
 
         </div>
-
 
         <div>
 
@@ -219,13 +219,14 @@ export default function GeneratorForm({
 
           <textarea
             value={sourceText}
-            onChange={(e) => setSourceText(e.target.value)}
+            onChange={(e) =>
+              setSourceText(e.target.value)
+            }
             placeholder="Вставьте учебный материал..."
             className="w-full h-64 bg-slate-900 border border-slate-700 rounded-xl p-4"
           />
 
         </div>
-
 
         <motion.button
           whileHover={{ scale: 1.03 }}

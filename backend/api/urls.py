@@ -1,11 +1,43 @@
 from django.urls import path
 
 from .views import (
-    test_api,
-    generate_questions
+
+    register,
+
+    login_user,
+
+    generate_questions,
+
+    history,
 )
 
 urlpatterns = [
-    path('test/', test_api),
-    path('generate/', generate_questions),
-]   
+
+    path(
+
+        'register/',
+
+        register
+    ),
+
+    path(
+
+        'login/',
+
+        login_user
+    ),
+
+    path(
+
+        'generate/',
+
+        generate_questions
+    ),
+
+    path(
+
+        'history/',
+
+        history
+    ),
+]

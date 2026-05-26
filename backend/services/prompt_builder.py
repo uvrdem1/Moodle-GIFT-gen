@@ -1,18 +1,16 @@
 def build_generation_prompt(
-    topic: str,
-    questions_count: int,
-    language: str,
-    question_type: str,
-    answers_count: int,
-    source_text: str
-) -> str:
-
+    topic,
+    questions_count,
+    language,
+    question_type,
+    answers_count,
+    source_text
+):
     question_type_text = {
         "single": "single choice",
         "multiple": "multiple choice",
         "truefalse": "true/false"
     }.get(question_type, "single choice")
-
 
     prompt = f"""
 Ты профессиональный методист Moodle и эксперт по созданию тестов.
@@ -30,7 +28,7 @@ def build_generation_prompt(
 - пояснения
 - комментарии
 - markdown
-- ``` 
+- ```
 - текст вне GIFT
 
 3. НЕ ПИШИ:
