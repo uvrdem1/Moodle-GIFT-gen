@@ -45,6 +45,38 @@ export default function History() {
   }
 
 
+  const downloadGift = (
+    item: HistoryItem
+  ) => {
+
+    const blob = new Blob(
+      [item.result],
+      {
+        type: 'text/plain'
+      }
+    )
+
+    const url =
+      window.URL.createObjectURL(
+        blob
+      )
+
+    const link =
+      document.createElement('a')
+
+    link.href = url
+
+    link.download =
+      `${item.topic}.gift`
+
+    link.click()
+
+    window.URL.revokeObjectURL(
+      url
+    )
+  }
+
+
   return (
 
     <div className="min-h-screen bg-slate-950 text-white p-10">
@@ -60,22 +92,41 @@ export default function History() {
 
             <div
               key={item.id}
-              className="bg-slate-900 p-6 rounded-2xl"
+              className="bg-slate-900 p-6 rounded-2xl border border-slate-800"
             >
 
-              <h2 className="text-2xl font-semibold mb-3">
-                {item.topic}
-              </h2>
+              <div className="flex items-center justify-between mb-4">
 
-              <p className="text-slate-400 mb-4">
-                {
-                  new Date(
-                    item.created_at
-                  ).toLocaleString()
-                }
-              </p>
+                <div>
 
-              <pre className="whitespace-pre-wrap text-sm">
+                  <h2 className="text-2xl font-semibold">
+                    {item.topic}
+                  </h2>
+
+                  <p className="text-slate-400 mt-1">
+                    {
+                      new Date(
+                        item.created_at
+                      ).toLocaleString()
+                    }
+                  </p>
+
+                </div>
+
+
+                <button
+                  onClick={() =>
+                    downloadGift(item)
+                  }
+                  className="bg-blue-600 hover:bg-blue-500 transition-all px-5 py-3 rounded-xl"
+                >
+                  Скачать .gift
+                </button>
+
+              </div>
+
+
+              <pre className="whitespace-pre-wrap text-sm bg-slate-950 p-4 rounded-xl overflow-auto">
                 {item.result}
               </pre>
 

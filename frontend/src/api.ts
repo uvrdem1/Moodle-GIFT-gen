@@ -1,17 +1,38 @@
-import axios from "axios";
+import axios from 'axios'
 
-const API = axios.create({
-  baseURL: "http://127.0.0.1:8000/api",
-});
+const api = axios.create({
 
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access");
+  baseURL: 'http://127.0.0.1:8000/api'
+})
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use(
+
+  (config) => {
+
+    const token =
+      localStorage.getItem('access')
+
+    const isAuthPage =
+
+      config.url?.includes(
+        '/login/'
+      ) ||
+
+      config.url?.includes(
+        '/register/'
+      )
+
+    if (
+      token &&
+      !isAuthPage
+    ) {
+
+      config.headers.Authorization =
+        `Bearer ${token}`
+    }
+
+    return config
   }
+)
 
-  return config;
-});
-
-export default API;
+export default api

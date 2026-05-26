@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 import api from '../api'
 
+
 export default function Register() {
 
   const navigate = useNavigate()
@@ -14,9 +15,15 @@ export default function Register() {
   const [password, setPassword] =
     useState('')
 
+  const [errorMessage, setErrorMessage] =
+    useState('')
+
+
   const handleRegister = async () => {
 
     try {
+
+      setErrorMessage('')
 
       const response = await api.post(
 
@@ -44,13 +51,45 @@ export default function Register() {
 
       navigate('/')
 
-    } catch (error) {
+    } catch (error: any) {
 
-      console.error(error)
+      console.log(
+        error.response?.data
+      )
 
-      alert('Ошибка регистрации')
+      if (
+        error.response?.data?.username
+      ) {
+
+        setErrorMessage(
+          error.response.data.username[0]
+        )
+
+      } else if (
+        error.response?.data?.password
+      ) {
+
+        setErrorMessage(
+          error.response.data.password[0]
+        )
+
+      } else if (
+        error.response?.data?.detail
+      ) {
+
+        setErrorMessage(
+          error.response.data.detail
+        )
+
+      } else {
+
+        setErrorMessage(
+          'Ошибка регистрации'
+        )
+      }
     }
   }
+
 
   return (
 
@@ -62,6 +101,19 @@ export default function Register() {
           Регистрация
         </h1>
 
+
+        {
+          errorMessage && (
+
+            <div className="bg-red-500/20 border border-red-500 text-red-300 p-3 rounded-xl mb-4">
+
+              {errorMessage}
+
+            </div>
+          )
+        }
+
+
         <input
           type="text"
           placeholder="Логин"
@@ -69,8 +121,9 @@ export default function Register() {
           onChange={(e) =>
             setUsername(e.target.value)
           }
-          className="w-full p-3 rounded mb-4 bg-slate-800"
+          className="w-full p-3 rounded mb-4 bg-slate-800 outline-none"
         />
+
 
         <input
           type="password"
@@ -79,12 +132,13 @@ export default function Register() {
           onChange={(e) =>
             setPassword(e.target.value)
           }
-          className="w-full p-3 rounded mb-4 bg-slate-800"
+          className="w-full p-3 rounded mb-4 bg-slate-800 outline-none"
         />
+
 
         <button
           onClick={handleRegister}
-          className="w-full bg-green-600 p-3 rounded-xl hover:bg-green-700"
+          className="w-full bg-green-600 p-3 rounded-xl hover:bg-green-700 transition-all"
         >
           Зарегистрироваться
         </button>
