@@ -10,17 +10,26 @@
 
 # Основные возможности
 
-- Генерация тестовых вопросов через AI
-- Поддержка Moodle GIFT format
-- Поддержка GigaChat
-- Выбор языка генерации
-- Выбор типа вопроса
+- AI-генерация тестовых вопросов
+- Поддержка Moodle GIFT Format
+- Интеграция с GigaChat API
+- JWT авторизация
+- История генераций
+- Скачивание `.gift` файлов
+- Поддержка нескольких типов вопросов
+- Мультиязычная генерация
 - Генерация по пользовательскому тексту
-- Редактирование результата
-- Экспорт `.gift`
-- Современный AI интерфейс
-- Component-based frontend architecture
-- REST API backend
+- Редактируемый результат генерации
+- REST API архитектура
+- Современный адаптивный интерфейс
+
+---
+
+# Поддерживаемые типы вопросов
+
+- Один правильный ответ
+- Множественный выбор
+- Верно / Неверно
 
 ---
 
@@ -32,8 +41,9 @@
 - TypeScript
 - Vite
 - TailwindCSS
-- Framer Motion
 - Axios
+- React Router
+- Framer Motion
 - Lucide React
 
 ---
@@ -42,7 +52,8 @@
 
 - Django
 - Django REST Framework
-- Python
+- JWT Authentication
+- SQLite
 - GigaChat API
 - Python Dotenv
 - Django CORS Headers
@@ -53,25 +64,17 @@
 
 ```text
 React Frontend
-↓
+      ↓
 REST API
-↓
+      ↓
 Django Backend
-↓
+      ↓
 Prompt Builder
-↓
+      ↓
 GigaChat Client
-↓
+      ↓
 Moodle GIFT Generator
 ```
-
----
-
-# Поддерживаемые типы вопросов
-
-- Один правильный ответ
-- Верно / Неверно
-- Множественный выбор
 
 ---
 
@@ -81,6 +84,8 @@ Moodle GIFT Generator
 backend/
 │
 ├── api/
+│   ├── models.py
+│   ├── serializers.py
 │   ├── views.py
 │   └── urls.py
 │
@@ -91,22 +96,27 @@ backend/
 │
 ├── backend/
 │
-└── manage.py
+├── manage.py
+└── requirements.txt
 
 
 frontend/
 │
 ├── src/
 │   ├── components/
-│   │   ├── Header.tsx
 │   │   ├── GeneratorForm.tsx
+│   │   ├── Header.tsx
 │   │   └── QuestionsPreview.tsx
 │   │
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── index.css
-│
-├── public/
+│   ├── pages/
+│   │   ├── Login.tsx
+│   │   ├── Register.tsx
+│   │   └── History.tsx
+│   │
+│   ├── api.ts
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── App.css
 │
 ├── package.json
 └── vite.config.ts
@@ -114,26 +124,38 @@ frontend/
 
 ---
 
-# Функциональность интерфейса
+# Авторизация
+
+Приложение использует JWT авторизацию:
+
+- Регистрация пользователей
+- Авторизация пользователей
+- Access Token
+- Refresh Token
+- Защищённые API маршруты
+
+---
+
+# Основной функционал
 
 Приложение поддерживает:
 
-- Выбор нейросети
-- Выбор языка генерации
+- Выбор тематики вопросов
 - Выбор типа вопросов
 - Количество вопросов
 - Количество вариантов ответа
-- Тематику вопросов
+- Выбор языка генерации
 - Генерацию по пользовательскому тексту
-- Редактирование результата
+- Историю генераций
+- Скачивание результатов
 - Копирование результата
-- Экспорт `.gift`
+- Редактирование GIFT
 
 ---
 
 # Установка проекта
 
-## 1. Клонирование репозитория
+## Клонирование репозитория
 
 ```bash
 git clone https://github.com/uvrdem1/Moodle-GIFT-gen.git
@@ -159,7 +181,7 @@ python -m venv venv
 
 ---
 
-## Активация виртуального окружения
+## Активация окружения
 
 ### Windows
 
@@ -167,30 +189,18 @@ python -m venv venv
 .\venv\Scripts\activate
 ```
 
+### MacOS / Linux
+
+```bash
+source venv/bin/activate
+```
+
 ---
 
 ## Установка зависимостей
 
 ```bash
-pip install django djangorestframework python-dotenv gigachat django-cors-headers
-```
-
----
-
-## Настройка .env
-
-Создайте файл:
-
-```text
-.env
-```
-
----
-
-## Добавьте:
-
-```env
-GIGACHAT_CREDENTIALS=YOUR_GIGACHAT_CREDENTIALS
+pip install -r req.txt
 ```
 
 ---
@@ -290,48 +300,40 @@ TRUE
 Приложение использует большие языковые модели для:
 
 - Генерации тестов
-- Генерации Moodle GIFT syntax
-- Анализа пользовательского текста
-- Создания различных типов вопросов
-- Мультиязычной генерации
-
----
-
-# Используемые AI подходы
-
+- Формирования Moodle GIFT syntax
 - Prompt Engineering
-- REST API Integration
-- Dynamic Question Generation
-- Moodle GIFT Formatting
-- LLM-based Text Processing
+- Генерации различных типов вопросов
+- Мультиязычной обработки текста
 
 ---
 
-# Особенности реализации
+# Реализованные возможности
 
 Во время разработки были реализованы:
 
 - Модульная frontend архитектура
-- Разделение backend логики по сервисам
-- Система динамического prompt generation
-- Поддержка различных типов вопросов
+- Сервисная backend архитектура
+- JWT система авторизации
 - Интеграция с GigaChat API
-- Поддержка мультиязычной генерации
-- Editable Moodle GIFT output
+- Динамическая генерация prompt
+- Поддержка Moodle GIFT
+- Редактируемый AI output
+- История генераций
+- Экспорт `.gift`
+- Современный UI интерфейс
 
 ---
 
 # Возможные направления развития
 
-- Поддержка ChatGPT API
-- Авторизация пользователей
-- История генераций
-- Загрузка PDF/TXT файлов
 - PostgreSQL
-- Docker
+- Docker deployment
+- ChatGPT API integration
+- Загрузка PDF/TXT файлов
 - Moodle API Integration
-- AI Quality Validation
-- RAG Integration
+- RAG архитектура
+- AI валидация вопросов
+- Анализ качества тестов
 
 ---
 
