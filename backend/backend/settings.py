@@ -13,7 +13,11 @@ SECRET_KEY = 'django-insecure-v9w!@6_jbr^tktzj*-feliz*-@#^$t!f0y!3e^s0$k+&8&d+wl
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "moodle-gift-gen.onrender.com",
+]
 
 
 # APPLICATIONS
