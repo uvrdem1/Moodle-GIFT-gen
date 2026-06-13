@@ -1,11 +1,24 @@
+import os
 import uuid
+
 import requests
 
 
-AUTH_KEY = "MDE5ZTU0ZjYtZmMwZC03NzZiLTg2MzctYzAwNWY5NmNiNjJkOmIxOTJkZTczLWJhNGMtNGMzOS1iMWQ5LWExMTA2NGY1MTMyNQ=="
+AUTH_KEY = os.getenv(
+    "GIGACHAT_AUTH_KEY",
+    ""
+)
+
+VERIFY_SSL = os.getenv(
+    "GIGACHAT_VERIFY_SSL",
+    "True"
+) == "True"
 
 
 def get_access_token():
+
+    if not AUTH_KEY:
+        raise ValueError("GIGACHAT_AUTH_KEY is not set")
 
     url = "https://ngw.devices.sberbank.ru:9443/api/v2/oauth"
 
@@ -23,12 +36,9 @@ def get_access_token():
         url,
         headers=headers,
         data=payload,
-        verify=False
+        verify=VERIFY_SSL,
+        timeout=30
     )
-
-    print("TOKEN RESPONSE:")
-    print(response.status_code)
-    print(response.text)
 
     response.raise_for_status()
 
@@ -61,12 +71,9 @@ def request_gigachat(prompt):
         url,
         headers=headers,
         json=payload,
-        verify=False
+        verify=VERIFY_SSL,
+        timeout=60
     )
-
-    print("CHAT RESPONSE:")
-    print(response.status_code)
-    print(response.text)
 
     response.raise_for_status()
 

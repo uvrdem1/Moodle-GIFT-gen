@@ -22,9 +22,6 @@ function Home() {
   const [loading, setLoading] =
     useState(false)
 
-  const [provider, setProvider] =
-    useState('gigachat')
-
   const [language, setLanguage] =
     useState('ru')
 
@@ -67,8 +64,6 @@ function Home() {
 
           questions_count: questionsCount,
 
-          provider,
-
           language,
 
           question_type: questionType,
@@ -89,8 +84,22 @@ function Home() {
 
       console.error(error)
 
+      const message =
+        error.response?.status === 401
+          ? 'Сессия истекла. Войдите заново.'
+          : error.response?.data?.details ||
+            error.response?.data?.error ||
+            'Ошибка генерации'
+
+      if (error.response?.status === 401) {
+
+        localStorage.removeItem('access')
+
+        localStorage.removeItem('refresh')
+      }
+
       alert(
-        'Ошибка генерации'
+        message
       )
 
     } finally {
@@ -207,9 +216,6 @@ function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
             <GeneratorForm
-
-              provider={provider}
-              setProvider={setProvider}
 
               language={language}
               setLanguage={setLanguage}

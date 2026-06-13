@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth import authenticate
 
 from rest_framework.decorators import (
@@ -21,6 +23,9 @@ from .models import GenerationHistory
 from services.gift_generator import (
     build_gift_questions
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 @api_view(['POST'])
@@ -90,32 +95,81 @@ def login_user(request):
 @permission_classes([IsAuthenticated])
 def generate_questions(request):
 
-    topic = request.data.get(
-        'topic'
-    )
-
-    questions_count = int(
+    topic = (
         request.data.get(
-            'questions_count',
-            5
-        )
-    )
+        'topic',
+        ''
+        ) or ''
+    ).strip()
 
-    language = request.data.get(
-        'language',
-        'ru'
-    )
+    if not topic:
+        return Response(
+            {
+                'error': 'Topic is required'
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        questions_count = int(
+            request.data.get(
+                'questions_count',
+                5
+            )
+        )
+
+        answers_count = int(
+            request.data.get(
+                'answers_count',
+                4
+            )
+        )
+    except (TypeError, ValueError):
+        return Response(
+            {
+                'error': 'Question and answer counts must be numbers'
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if questions_count < 1 or questions_count > 30:
+        return Response(
+            {
+                'error': 'Questions count must be from 1 to 30'
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if answers_count < 2 or answers_count > 8:
+        return Response(
+            {
+                'error': 'Answers count must be from 2 to 8'
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     question_type = request.data.get(
         'question_type',
         'single'
     )
 
-    answers_count = int(
-        request.data.get(
-            'answers_count',
-            4
+    allowed_types = [
+        'single',
+        'multiple',
+        'truefalse',
+    ]
+
+    if question_type not in allowed_types:
+        return Response(
+            {
+                'error': 'Unknown question type'
+            },
+            status=status.HTTP_400_BAD_REQUEST
         )
+
+    language = request.data.get(
+        'language',
+        'ru'
     )
 
     source_text = request.data.get(
@@ -123,20 +177,40 @@ def generate_questions(request):
         ''
     )
 
-    result = build_gift_questions(
+    try:
+        result = build_gift_questions(
 
-        topic=topic,
+            topic=topic,
 
-        questions_count=questions_count,
+            questions_count=questions_count,
 
-        language=language,
+            language=language,
 
-        question_type=question_type,
+            question_type=question_type,
 
-        answers_count=answers_count,
+            answers_count=answers_count,
 
-        source_text=source_text
-    )
+            source_text=source_text
+        )
+    except ValueError as error:
+        return Response(
+            {
+                'error': str(error)
+            },
+            status=status.HTTP_502_BAD_GATEWAY
+        )
+    except Exception as error:
+        logger.exception(
+            'Question generation failed'
+        )
+
+        return Response(
+            {
+                'error': 'Generation service is unavailable',
+                'details': str(error)
+            },
+            status=status.HTTP_502_BAD_GATEWAY
+        )
 
     GenerationHistory.objects.create(
 

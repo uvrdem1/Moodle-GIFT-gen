@@ -7,10 +7,22 @@ def build_generation_prompt(
     source_text
 ):
     question_type_text = {
-        "single": "single choice",
-        "multiple": "multiple choice",
-        "truefalse": "true/false"
-    }.get(question_type, "single choice")
+        "single": "один правильный ответ",
+        "multiple": "несколько правильных ответов",
+        "truefalse": "верно / неверно"
+    }.get(question_type, "один правильный ответ")
+
+    language_text = {
+        "ru": "русский",
+        "en": "английский"
+    }.get(language, language)
+
+    material_rule = (
+        "Используй ТОЛЬКО информацию из материала. "
+        "Не придумывай факты вне текста."
+        if source_text
+        else "Если материала нет, используй указанную тему как основу."
+    )
 
     prompt = f"""
 Ты профессиональный методист Moodle и эксперт по созданию тестов.
@@ -45,15 +57,14 @@ def build_generation_prompt(
 - логичным
 - без повторений
 
-6. Язык вопросов: {language}
+6. Язык вопросов: {language_text}
 
 7. Тип вопросов: {question_type_text}
 
 8. Количество вариантов ответа:
 {answers_count}
 
-9. Используй ТОЛЬКО информацию из материала.
-Не придумывай факты вне текста.
+9. {material_rule}
 
 10. Формат должен быть СТРОГО совместим с Moodle GIFT.
 

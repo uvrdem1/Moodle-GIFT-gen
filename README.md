@@ -200,7 +200,19 @@ source venv/bin/activate
 ## Установка зависимостей
 
 ```bash
-pip install -r req.txt
+pip install -r requirements.txt
+```
+
+---
+
+## Настройка переменных окружения
+
+В папке `backend` создайте файл `.env` по примеру `.env.example`:
+
+```text
+DJANGO_SECRET_KEY=replace-me
+DJANGO_DEBUG=True
+GIGACHAT_AUTH_KEY=ваш_ключ_gigachat
 ```
 
 ---
@@ -247,6 +259,57 @@ Frontend будет доступен:
 
 ```text
 http://localhost:5173
+```
+
+---
+
+# Деплой
+
+Один из простых вариантов деплоя:
+
+- Backend: Render
+- Frontend: Vercel
+
+## Backend на Render
+
+В проект добавлены файлы:
+
+- `render.yaml`
+- `backend/build.sh`
+- `backend/Procfile`
+
+На Render нужно создать Web Service из GitHub-репозитория и указать переменные окружения:
+
+```text
+DJANGO_DEBUG=False
+DJANGO_SECRET_KEY=любой_длинный_секрет
+DJANGO_ALLOWED_HOSTS=ваш-backend.onrender.com
+CORS_ALLOWED_ORIGINS=https://ваш-frontend.vercel.app
+CSRF_TRUSTED_ORIGINS=https://ваш-backend.onrender.com
+GIGACHAT_AUTH_KEY=ваш_ключ_gigachat
+GIGACHAT_VERIFY_SSL=False
+```
+
+После первого деплоя нужно скопировать адрес backend и добавить его в настройки frontend.
+
+## Frontend на Vercel
+
+Для Vercel:
+
+- Root Directory: `frontend`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+
+Переменная окружения:
+
+```text
+VITE_API_URL=https://ваш-backend.onrender.com/api
+```
+
+После деплоя frontend нужно вернуться в Render и обновить:
+
+```text
+CORS_ALLOWED_ORIGINS=https://ваш-frontend.vercel.app
 ```
 
 ---

@@ -3,9 +3,6 @@ import { Sparkles } from 'lucide-react'
 
 interface GeneratorFormProps {
 
-  provider: string
-  setProvider: (value: string) => void
-
   language: string
   setLanguage: (value: string) => void
 
@@ -30,9 +27,6 @@ interface GeneratorFormProps {
 }
 
 export default function GeneratorForm({
-
-  provider,
-  setProvider,
 
   language,
   setLanguage,
@@ -76,30 +70,6 @@ export default function GeneratorForm({
       </div>
 
       <div className="space-y-6">
-
-        <div>
-
-          <label className="block mb-2 text-slate-300">
-            Нейросеть
-          </label>
-
-          <select
-            value={provider}
-            onChange={(e) => setProvider(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-700 rounded-xl p-4"
-          >
-
-            <option value="gigachat">
-              GigaChat
-            </option>
-
-            <option value="chatgpt">
-              ChatGPT
-            </option>
-
-          </select>
-
-        </div>
 
         <div>
 
@@ -157,7 +127,7 @@ export default function GeneratorForm({
               Один правильный ответ
             </option>
 
-            <option value="boolean">
+            <option value="truefalse">
               Верно / Неверно
             </option>
 
