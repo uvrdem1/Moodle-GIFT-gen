@@ -2,6 +2,10 @@
 
 Веб-приложение для генерации тестовых вопросов в формате Moodle GIFT с использованием больших языковых моделей (LLM).
 
+Рабочая версия проекта:
+
+http://81.26.187.243/
+
 Проект разработан в рамках дипломной работы:
 
 > «Фронтенд-разработка веб-приложения для генерации вопросов и ответов в формате GIFT для системы дистанционного обучения Moodle с использованием больших языковых моделей»
@@ -263,54 +267,11 @@ http://localhost:5173
 
 ---
 
-# Деплой
+# Демо
 
-Один из простых вариантов деплоя:
+Актуальная версия приложения развернута на сервере:
 
-- Backend: Render
-- Frontend: Vercel
-
-## Backend на Render
-
-В проект добавлены файлы:
-
-- `render.yaml`
-- `backend/build.sh`
-- `backend/Procfile`
-
-На Render нужно создать Web Service из GitHub-репозитория и указать переменные окружения:
-
-```text
-DJANGO_DEBUG=False
-DJANGO_SECRET_KEY=любой_длинный_секрет
-DJANGO_ALLOWED_HOSTS=ваш-backend.onrender.com
-CORS_ALLOWED_ORIGINS=https://ваш-frontend.vercel.app
-CSRF_TRUSTED_ORIGINS=https://ваш-backend.onrender.com
-GIGACHAT_AUTH_KEY=ваш_ключ_gigachat
-GIGACHAT_VERIFY_SSL=False
-```
-
-После первого деплоя нужно скопировать адрес backend и добавить его в настройки frontend.
-
-## Frontend на Vercel
-
-Для Vercel:
-
-- Root Directory: `frontend`
-- Build Command: `npm run build`
-- Output Directory: `dist`
-
-Переменная окружения:
-
-```text
-VITE_API_URL=https://ваш-backend.onrender.com/api
-```
-
-После деплоя frontend нужно вернуться в Render и обновить:
-
-```text
-CORS_ALLOWED_ORIGINS=https://ваш-frontend.vercel.app
-```
+http://81.26.187.243/
 
 ---
 
