@@ -24,6 +24,21 @@ def build_generation_prompt(
         else "Если материала нет, используй указанную тему как основу."
     )
 
+    if question_type == "truefalse":
+        answers_rule = (
+            'для вопросов "верно / неверно" используй только '
+            'формат {TRUE} или {FALSE}.'
+        )
+    else:
+        answers_rule = (
+            f"в КАЖДОМ вопросе должно быть РОВНО {answers_count} "
+            "вариантов ответа.\n"
+            f"Не делай в одном вопросе {answers_count}, "
+            "а в других другое количество.\n"
+            'Для вопроса с одним правильным ответом используй '
+            f'1 вариант с "=" и {answers_count - 1} вариантов с "~".'
+        )
+
     prompt = f"""
 Ты профессиональный методист Moodle и эксперт по созданию тестов.
 
@@ -62,7 +77,7 @@ def build_generation_prompt(
 7. Тип вопросов: {question_type_text}
 
 8. Количество вариантов ответа:
-{answers_count}
+{answers_rule}
 
 9. {material_rule}
 

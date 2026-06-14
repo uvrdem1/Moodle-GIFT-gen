@@ -1,5 +1,7 @@
 import { useState } from 'react'
 
+import { Link } from 'react-router-dom'
+
 import api from '../api'
 
 import { motion } from 'framer-motion'
@@ -25,6 +27,9 @@ function Home() {
   const [language, setLanguage] =
     useState('ru')
 
+  const [modelProvider, setModelProvider] =
+    useState('gigachat')
+
   const [questionType, setQuestionType] =
     useState('single')
 
@@ -33,6 +38,10 @@ function Home() {
 
   const [sourceText, setSourceText] =
     useState('')
+
+  const isLoggedIn = Boolean(
+    localStorage.getItem('access')
+  )
 
 
   const generateQuestions = async () => {
@@ -43,7 +52,9 @@ function Home() {
 
     if (!token) {
 
-      alert('Сначала войдите')
+      alert(
+        'Войдите или зарегистрируйтесь, чтобы сгенерировать вопросы'
+      )
 
       window.location.href =
         '/login'
@@ -65,6 +76,8 @@ function Home() {
           questions_count: questionsCount,
 
           language,
+
+          model_provider: modelProvider,
 
           question_type: questionType,
 
@@ -194,19 +207,45 @@ function Home() {
 
           <div className="flex justify-end gap-4 mb-6">
 
-            <button
-              onClick={openHistory}
-              className="bg-slate-800 hover:bg-slate-700 transition-all px-5 py-3 rounded-2xl"
-            >
-              История
-            </button>
+            {
+              isLoggedIn ? (
+                <>
 
-            <button
-              onClick={logout}
-              className="bg-red-600 hover:bg-red-500 transition-all px-5 py-3 rounded-2xl"
-            >
-              Выйти
-            </button>
+                  <button
+                    onClick={openHistory}
+                    className="bg-slate-800 hover:bg-slate-700 transition-all px-5 py-3 rounded-2xl"
+                  >
+                    История
+                  </button>
+
+                  <button
+                    onClick={logout}
+                    className="bg-red-600 hover:bg-red-500 transition-all px-5 py-3 rounded-2xl"
+                  >
+                    Выйти
+                  </button>
+
+                </>
+              ) : (
+                <>
+
+                  <Link
+                    to="/login"
+                    className="bg-slate-800 hover:bg-slate-700 transition-all px-5 py-3 rounded-2xl"
+                  >
+                    Войти
+                  </Link>
+
+                  <Link
+                    to="/register"
+                    className="bg-blue-600 hover:bg-blue-500 transition-all px-5 py-3 rounded-2xl"
+                  >
+                    Регистрация
+                  </Link>
+
+                </>
+              )
+            }
 
           </div>
 
@@ -219,6 +258,9 @@ function Home() {
 
               language={language}
               setLanguage={setLanguage}
+
+              modelProvider={modelProvider}
+              setModelProvider={setModelProvider}
 
               topic={topic}
               setTopic={setTopic}

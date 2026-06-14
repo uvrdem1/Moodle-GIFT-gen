@@ -1,6 +1,9 @@
 import { useState } from 'react'
 
-import { useNavigate } from 'react-router-dom'
+import {
+  Link,
+  useNavigate
+} from 'react-router-dom'
 
 import api from '../api'
 
@@ -88,6 +91,16 @@ export default function Login() {
         >
           Войти
         </button>
+
+        <p className="mt-5 text-center text-slate-300">
+          Нет аккаунта?{' '}
+          <Link
+            to="/register"
+            className="text-blue-400 hover:text-blue-300"
+          >
+            Зарегистрироваться
+          </Link>
+        </p>
 
       </div>
 

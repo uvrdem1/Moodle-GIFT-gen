@@ -6,6 +6,9 @@ interface GeneratorFormProps {
   language: string
   setLanguage: (value: string) => void
 
+  modelProvider: string
+  setModelProvider: (value: string) => void
+
   topic: string
   setTopic: (value: string) => void
 
@@ -30,6 +33,9 @@ export default function GeneratorForm({
 
   language,
   setLanguage,
+
+  modelProvider,
+  setModelProvider,
 
   topic,
   setTopic,
@@ -89,6 +95,28 @@ export default function GeneratorForm({
 
             <option value="en">
               English
+            </option>
+
+          </select>
+
+        </div>
+
+        <div>
+
+          <label className="block mb-2 text-slate-300">
+            Нейросеть
+          </label>
+
+          <select
+            value={modelProvider}
+            onChange={(e) =>
+              setModelProvider(e.target.value)
+            }
+            className="w-full bg-slate-900 border border-slate-700 rounded-xl p-4"
+          >
+
+            <option value="gigachat">
+              GigaChat
             </option>
 
           </select>

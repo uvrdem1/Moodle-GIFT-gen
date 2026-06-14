@@ -1,6 +1,9 @@
 import { useState } from 'react'
 
-import { useNavigate } from 'react-router-dom'
+import {
+  Link,
+  useNavigate
+} from 'react-router-dom'
 
 import api from '../api'
 
@@ -142,6 +145,16 @@ export default function Register() {
         >
           Зарегистрироваться
         </button>
+
+        <p className="mt-5 text-center text-slate-300">
+          Уже есть аккаунт?{' '}
+          <Link
+            to="/login"
+            className="text-blue-400 hover:text-blue-300"
+          >
+            Войти
+          </Link>
+        </p>
 
       </div>
 

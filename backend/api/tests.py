@@ -5,6 +5,9 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 
 from .models import GenerationHistory
+from services.gift_generator import (
+    build_gift_questions
+)
 
 
 class AuthTests(TestCase):
@@ -76,3 +79,115 @@ class GenerationTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 400)
+
+
+class GiftGeneratorTests(TestCase):
+
+    @patch('services.gift_generator.request_gigachat')
+    def test_trims_extra_answers(self, request_gigachat):
+        request_gigachat.return_value = (
+            '::Question 1::\n'
+            'First?\n'
+            '{\n'
+            '=One\n'
+            '~Two\n'
+            '~Three\n'
+            '~Four\n'
+            '}'
+        )
+
+        result = build_gift_questions(
+            topic='Python',
+            questions_count=1,
+            language='en',
+            question_type='single',
+            answers_count=2,
+            source_text=''
+        )
+
+        self.assertEqual(
+            request_gigachat.call_count,
+            1
+        )
+        self.assertIn(
+            '=One\n~Two',
+            result
+        )
+        self.assertNotIn(
+            '~Three',
+            result
+        )
+
+    @patch('services.gift_generator.request_gigachat')
+    def test_retries_when_answer_count_is_too_low(self, request_gigachat):
+        request_gigachat.side_effect = [
+            (
+                '::Question 1::\n'
+                'First?\n'
+                '{\n'
+                '=One\n'
+                '~Two\n'
+                '}\n\n'
+                '::Question 2::\n'
+                'Second?\n'
+                '{\n'
+                '=One\n'
+                '~Two\n'
+                '}'
+            ),
+            (
+                '::Question 1::\n'
+                'First?\n'
+                '{\n'
+                '=One\n'
+                '~Two\n'
+                '~Three\n'
+                '}\n\n'
+                '::Question 2::\n'
+                'Second?\n'
+                '{\n'
+                '=One\n'
+                '~Two\n'
+                '~Three\n'
+                '}'
+            )
+        ]
+
+        result = build_gift_questions(
+            topic='Python',
+            questions_count=2,
+            language='en',
+            question_type='single',
+            answers_count=3,
+            source_text=''
+        )
+
+        self.assertEqual(
+            request_gigachat.call_count,
+            2
+        )
+        self.assertIn(
+            '::Question 2::',
+            result
+        )
+
+    @patch('services.gift_generator.request_gigachat')
+    def test_raises_when_fixed_answer_count_is_still_wrong(self, request_gigachat):
+        request_gigachat.return_value = (
+            '::Question 1::\n'
+            'First?\n'
+            '{\n'
+            '=One\n'
+            '~Two\n'
+            '}'
+        )
+
+        with self.assertRaises(ValueError):
+            build_gift_questions(
+                topic='Python',
+                questions_count=1,
+                language='en',
+                question_type='single',
+                answers_count=3,
+                source_text=''
+            )
