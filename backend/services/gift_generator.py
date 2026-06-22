@@ -8,6 +8,24 @@ from services.gigachat_client import (
     request_gigachat
 )
 
+from services.openai_client import (
+    request_openai
+)
+
+
+def _request_model(
+    model_provider: str,
+    prompt: str
+) -> str:
+
+    if model_provider == 'gigachat':
+        return request_gigachat(prompt)
+
+    if model_provider == 'openai':
+        return request_openai(prompt)
+
+    raise ValueError('Unknown model provider')
+
 
 def _extract_answer_blocks(gift_text: str) -> list[str]:
     return re.findall(
@@ -192,7 +210,8 @@ def build_gift_questions(
     language: str,
     question_type: str,
     answers_count: int,
-    source_text: str
+    source_text: str,
+    model_provider: str = 'gigachat'
 ) -> str:
 
     prompt = build_generation_prompt(
@@ -210,7 +229,8 @@ def build_gift_questions(
         source_text=source_text
     )
 
-    result = request_gigachat(
+    result = _request_model(
+        model_provider,
         prompt
     )
 
@@ -227,7 +247,8 @@ def build_gift_questions(
         )
 
         if errors:
-            result = request_gigachat(
+            result = _request_model(
+                model_provider,
                 _build_fix_prompt(
                     gift_text=result,
                     questions_count=questions_count,

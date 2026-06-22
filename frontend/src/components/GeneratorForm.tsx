@@ -119,6 +119,10 @@ export default function GeneratorForm({
               GigaChat
             </option>
 
+            <option value="openai">
+              ChatGPT
+            </option>
+
           </select>
 
         </div>

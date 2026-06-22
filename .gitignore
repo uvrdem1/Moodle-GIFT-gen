@@ -7,6 +7,8 @@ __pycache__/
 *.pyc
 
 .env
+.env.*
+!.env.example
 
 # Django
 
@@ -17,6 +19,10 @@ db.sqlite3
 node_modules/
 
 dist/
+
+# Local generated artifacts
+
+outputs/
 
 # macOS
 

@@ -6,6 +6,14 @@ import {
 } from 'react-router-dom'
 
 import api from '../api'
+import axios from 'axios'
+
+
+interface RegisterError {
+  username?: string[]
+  password?: string[]
+  detail?: string
+}
 
 
 export default function Register() {
@@ -54,34 +62,34 @@ export default function Register() {
 
       navigate('/')
 
-    } catch (error: any) {
+    } catch (error: unknown) {
 
-      console.log(
-        error.response?.data
-      )
+      const data = axios.isAxiosError<RegisterError>(error)
+        ? error.response?.data
+        : undefined
 
       if (
-        error.response?.data?.username
+        data?.username
       ) {
 
         setErrorMessage(
-          error.response.data.username[0]
+          data.username[0]
         )
 
       } else if (
-        error.response?.data?.password
+        data?.password
       ) {
 
         setErrorMessage(
-          error.response.data.password[0]
+          data.password[0]
         )
 
       } else if (
-        error.response?.data?.detail
+        data?.detail
       ) {
 
         setErrorMessage(
-          error.response.data.detail
+          data.detail
         )
 
       } else {

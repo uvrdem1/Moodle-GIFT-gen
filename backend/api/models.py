@@ -26,6 +26,11 @@ class GenerationHistory(models.Model):
         max_length=50
     )
 
+    model_provider = models.CharField(
+        max_length=50,
+        default='gigachat'
+    )
+
     source_text = models.TextField()
 
     result = models.TextField()

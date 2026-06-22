@@ -172,6 +172,24 @@ def generate_questions(request):
         'ru'
     )
 
+    model_provider = request.data.get(
+        'model_provider',
+        'gigachat'
+    )
+
+    allowed_providers = [
+        'gigachat',
+        'openai',
+    ]
+
+    if model_provider not in allowed_providers:
+        return Response(
+            {
+                'error': 'Unknown model provider'
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
     source_text = request.data.get(
         'source_text',
         ''
@@ -190,7 +208,9 @@ def generate_questions(request):
 
             answers_count=answers_count,
 
-            source_text=source_text
+            source_text=source_text,
+
+            model_provider=model_provider
         )
     except ValueError as error:
         return Response(
@@ -206,8 +226,7 @@ def generate_questions(request):
 
         return Response(
             {
-                'error': 'Generation service is unavailable',
-                'details': str(error)
+                'error': 'Generation service is unavailable'
             },
             status=status.HTTP_502_BAD_GATEWAY
         )
@@ -225,6 +244,8 @@ def generate_questions(request):
         answers_count=answers_count,
 
         language=language,
+
+        model_provider=model_provider,
 
         source_text=source_text,
 
@@ -261,6 +282,8 @@ def history(request):
             'answers_count': item.answers_count,
 
             'language': item.language,
+
+            'model_provider': item.model_provider,
 
             'source_text': item.source_text,
 

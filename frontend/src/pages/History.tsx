@@ -11,6 +11,8 @@ interface HistoryItem {
 
   result: string
 
+  model_provider: string
+
   created_at: string
 }
 
@@ -23,26 +25,25 @@ export default function History() {
 
   useEffect(() => {
 
+    const fetchHistory = async () => {
+
+      try {
+
+        const response = await api.get(
+          '/history/'
+        )
+
+        setHistory(response.data)
+
+      } catch {
+
+        setHistory([])
+      }
+    }
+
     fetchHistory()
 
   }, [])
-
-
-  const fetchHistory = async () => {
-
-    try {
-
-      const response = await api.get(
-        '/history/'
-      )
-
-      setHistory(response.data)
-
-    } catch (error) {
-
-      console.error(error)
-    }
-  }
 
 
   const downloadGift = (
@@ -108,6 +109,14 @@ export default function History() {
                       new Date(
                         item.created_at
                       ).toLocaleString()
+                    }
+                  </p>
+
+                  <p className="text-slate-500 mt-1">
+                    {
+                      item.model_provider === 'openai'
+                        ? 'ChatGPT'
+                        : 'GigaChat'
                     }
                   </p>
 

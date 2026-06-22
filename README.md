@@ -1,10 +1,8 @@
-# AI Moodle GIFT Generator
+# Moodle GIFT Generator
 
 Веб-приложение для генерации тестовых вопросов в формате Moodle GIFT с использованием больших языковых моделей (LLM).
 
-Рабочая версия проекта:
-
-http://81.26.187.243/
+Рабочая версия: [http://81.26.187.243/](http://81.26.187.243/)
 
 Проект разработан в рамках дипломной работы:
 
@@ -15,8 +13,9 @@ http://81.26.187.243/
 # Основные возможности
 
 - AI-генерация тестовых вопросов
-- Поддержка Moodle GIFT Format
-- Интеграция с GigaChat API
+- Поддержка формата Moodle GIFT
+- Выбор между GigaChat и ChatGPT
+- Интеграция с GigaChat API и OpenAI Responses API
 - JWT авторизация
 - История генераций
 - Скачивание `.gift` файлов
@@ -59,6 +58,7 @@ http://81.26.187.243/
 - JWT Authentication
 - SQLite
 - GigaChat API
+- OpenAI Responses API
 - Python Dotenv
 - Django CORS Headers
 
@@ -75,7 +75,7 @@ Django Backend
       ↓
 Prompt Builder
       ↓
-GigaChat Client
+AI Provider (GigaChat / ChatGPT)
       ↓
 Moodle GIFT Generator
 ```
@@ -95,6 +95,7 @@ backend/
 │
 ├── services/
 │   ├── gigachat_client.py
+│   ├── openai_client.py
 │   ├── gift_generator.py
 │   └── prompt_builder.py
 │
@@ -120,7 +121,7 @@ frontend/
 │   ├── api.ts
 │   ├── App.jsx
 │   ├── main.jsx
-│   └── App.css
+│   └── index.css
 │
 ├── package.json
 └── vite.config.ts
@@ -149,6 +150,7 @@ frontend/
 - Количество вопросов
 - Количество вариантов ответа
 - Выбор языка генерации
+- Выбор нейросети
 - Генерацию по пользовательскому тексту
 - Историю генераций
 - Скачивание результатов
@@ -158,6 +160,12 @@ frontend/
 ---
 
 # Установка проекта
+
+## Требования
+
+- Python 3.12 или новее
+- Node.js 20.19 или новее
+- npm
 
 ## Клонирование репозитория
 
@@ -216,7 +224,26 @@ pip install -r requirements.txt
 ```text
 DJANGO_SECRET_KEY=replace-me
 DJANGO_DEBUG=True
+DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+CSRF_TRUSTED_ORIGINS=
+SQLITE_PATH=
+
 GIGACHAT_AUTH_KEY=ваш_ключ_gigachat
+GIGACHAT_VERIFY_SSL=True
+
+OPENAI_API_KEY=ваш_ключ_openai
+OPENAI_MODEL=gpt-5.5
+```
+
+Для работы достаточно настроить ключ выбранной нейросети. Использование OpenAI API требует отдельного API-аккаунта с доступной квотой; подписка ChatGPT не заменяет API-биллинг.
+
+---
+
+## Применение миграций
+
+```bash
+python manage.py migrate
 ```
 
 ---
@@ -239,6 +266,8 @@ http://127.0.0.1:8000
 
 ## Переход в frontend
 
+Откройте второй терминал и перейдите из корня проекта в папку frontend:
+
 ```bash
 cd frontend
 ```
@@ -249,6 +278,16 @@ cd frontend
 
 ```bash
 npm install
+```
+
+---
+
+## Настройка API
+
+Создайте файл `frontend/.env` по примеру `.env.example`:
+
+```text
+VITE_API_URL=http://127.0.0.1:8000/api
 ```
 
 ---
@@ -264,14 +303,6 @@ Frontend будет доступен:
 ```text
 http://localhost:5173
 ```
-
----
-
-# Демо
-
-Актуальная версия приложения развернута на сервере:
-
-http://81.26.187.243/
 
 ---
 
@@ -324,8 +355,8 @@ TRUE
 Приложение использует большие языковые модели для:
 
 - Генерации тестов
-- Формирования Moodle GIFT syntax
-- Prompt Engineering
+- Формирования синтаксиса Moodle GIFT
+- Формирования промптов по заданным параметрам
 - Генерации различных типов вопросов
 - Мультиязычной обработки текста
 
@@ -338,10 +369,11 @@ TRUE
 - Модульная frontend архитектура
 - Сервисная backend архитектура
 - JWT система авторизации
-- Интеграция с GigaChat API
-- Динамическая генерация prompt
+- Интеграция с GigaChat API и OpenAI Responses API
+- Выбор языковой модели
+- Динамическое формирование промпта
 - Поддержка Moodle GIFT
-- Редактируемый AI output
+- Редактируемый результат генерации
 - История генераций
 - Экспорт `.gift`
 - Современный UI интерфейс
@@ -351,12 +383,12 @@ TRUE
 # Возможные направления развития
 
 - PostgreSQL
-- Docker deployment
-- ChatGPT API integration
+- Контейнеризация с Docker
+- Подключение дополнительных языковых моделей
 - Загрузка PDF/TXT файлов
-- Moodle API Integration
+- Интеграция с Moodle API
 - RAG архитектура
-- AI валидация вопросов
+- Автоматическая валидация вопросов
 - Анализ качества тестов
 
 ---
@@ -369,4 +401,4 @@ TRUE
 
 # Автор
 
-Demian Uvarov
+Уваров Демьян Васильевич

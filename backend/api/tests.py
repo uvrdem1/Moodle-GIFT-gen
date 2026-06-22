@@ -8,6 +8,9 @@ from .models import GenerationHistory
 from services.gift_generator import (
     build_gift_questions
 )
+from services.openai_client import (
+    request_openai
+)
 
 
 class AuthTests(TestCase):
@@ -57,6 +60,7 @@ class GenerationTests(TestCase):
                 'question_type': 'truefalse',
                 'answers_count': 2,
                 'language': 'en',
+                'model_provider': 'openai',
                 'source_text': 'Python is a programming language.'
             },
             format='json'
@@ -66,6 +70,10 @@ class GenerationTests(TestCase):
         self.assertEqual(
             GenerationHistory.objects.count(),
             1
+        )
+        self.assertEqual(
+            GenerationHistory.objects.get().model_provider,
+            'openai'
         )
 
     def test_generate_requires_topic(self):
@@ -80,8 +88,45 @@ class GenerationTests(TestCase):
 
         self.assertEqual(response.status_code, 400)
 
+    def test_generate_rejects_unknown_model_provider(self):
+        response = self.client.post(
+            '/api/generate/',
+            {
+                'topic': 'Python',
+                'questions_count': 1,
+                'answers_count': 2,
+                'model_provider': 'unknown'
+            },
+            format='json'
+        )
+
+        self.assertEqual(response.status_code, 400)
+
 
 class GiftGeneratorTests(TestCase):
+
+    @patch('services.gift_generator.request_openai')
+    def test_uses_openai_provider(self, request_openai):
+        request_openai.return_value = (
+            '::Question 1::\n'
+            'Python is a programming language.{TRUE}'
+        )
+
+        result = build_gift_questions(
+            topic='Python',
+            questions_count=1,
+            language='en',
+            question_type='truefalse',
+            answers_count=2,
+            source_text='',
+            model_provider='openai'
+        )
+
+        request_openai.assert_called_once()
+        self.assertIn(
+            '::Question 1::',
+            result
+        )
 
     @patch('services.gift_generator.request_gigachat')
     def test_trims_extra_answers(self, request_gigachat):
@@ -191,3 +236,35 @@ class GiftGeneratorTests(TestCase):
                 answers_count=3,
                 source_text=''
             )
+
+
+class OpenAIClientTests(TestCase):
+
+    @patch('services.openai_client.API_KEY', 'test-key')
+    @patch('services.openai_client.requests.post')
+    def test_reads_text_from_responses_api(self, post):
+        response = post.return_value
+        response.status_code = 200
+        response.json.return_value = {
+            'output': [
+                {
+                    'type': 'message',
+                    'content': [
+                        {
+                            'type': 'output_text',
+                            'text': 'Generated GIFT'
+                        }
+                    ]
+                }
+            ]
+        }
+
+        result = request_openai(
+            'Generate questions'
+        )
+
+        self.assertEqual(
+            result,
+            'Generated GIFT'
+        )
+        response.raise_for_status.assert_called_once()

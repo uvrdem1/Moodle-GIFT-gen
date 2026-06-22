@@ -87,8 +87,6 @@ function Home() {
         }
       )
 
-      console.log(response.data)
-
       setGiftResult(
         response.data.result
       )
